@@ -1,24 +1,21 @@
-Terraform Module for creating web application based on Alibaba Cloud market place ECS image.
 terraform-alicloud-market-app-with-ecs-image
-=============================================
+=====================================================================
 
-English | [简体中文](https://github.com/terraform-alicloud-modules/terraform-alicloud-market-app-with-ecs-image/blob/master/README-CN.md)
+本 Terraform Module 将基于阿里云市场提供的 ECS 镜像来实现对应用程序，基础环境等不同自定义服务的一键搭建。为了更好的提供服务，本 Module 提供了如下几个核心功能：
 
-Terraform Module will be based on the ECS mirror provided by the Alicloud market to implement the application, basic environment and other different custom services one-click building. For better service delivery, this Module offers the following core functions:
+1. 通过指定 ECS 实例的数量来支持创建一个基于 ECS 的服务集群；
 
-1. Support the creation of an ECS service cluster by specifying the number of ECS instances;
+2. 支持创建负载均衡 SLB，并将创建好的 ECS 服务集群与 SLB 进行绑定，实现请求的按需转发；
 
-2. Supports the creation of SLB and binds the created ECS service cluster to SLB to enable on-demand forwarding of requests;
+3. 支持添加 DNS 域名，并将 DNS 域名与 SLB 进行绑定，通过域名来为自定义的服务提供访问路径。
 
-3. Support to add DNS domain name and bind DNS domain name to SLB to provide access path for custom service through domain name.
+## Terraform 版本
 
-## Terraform versions
+本模板要求使用版本 Terraform 0.12 和 阿里云 Provider 1.71.0+。
 
-The Module requires Terraform 0.12 and Terraform Provider AliCloud 1.71.0+.
+## 用法
 
-## Usage
-
-Building the web application (e.g.,Wordpress) using market place image.
+使用云市场镜像搭建 web 应用程序（以 Wordpress 为例）。
 
 ```hcl
 module "market_application_with_ecs" {
@@ -46,8 +43,7 @@ module "market_application_with_ecs" {
   ]
 }
 ```
-
-Building the web application (e.g.,Wordpress) using market place image and bind a slb.
+使用云市场镜像搭建 web 应用程序（以 Wordpress 为例），并绑定一个负载均衡实例。
 
 ```hcl
 module "market_application_with_slb" {
@@ -75,7 +71,7 @@ module "market_application_with_slb" {
 }
 ```
 
-Building the web application (e.g.,Wordpress) using market place image and bind a slb to dns.
+使用云市场镜像搭建 web 应用程序（以 Wordpress 为例），并绑定一个负载均衡实例和分配一个 DNS。
 
 ```hcl
 module "market_application_with_dns" {
@@ -109,29 +105,30 @@ module "market_application_with_dns" {
   }
 }
 ```
-## Examples
 
-* [complete](https://github.com/terraform-alicloud-modules/terraform-alicloud-market-app-with-ecs-image/tree/master/examples/complete)
+## 示例
 
-## Notes
-* This module using AccessKey and SecretKey are from `profile` and `shared_credentials_file`.
-If you have not set them yet, please install [aliyun-cli](https://github.com/aliyun/aliyun-cli#installation) and configure it.
+* [完整示例](https://github.com/terraform-alicloud-modules/terraform-alicloud-market-app-with-ecs-image/tree/master/examples/complete)
 
-Submit Issues
--------------
-If you have any problems when using this module, please opening a [provider issue](https://github.com/terraform-providers/terraform-provider-alicloud/issues/new) and let us know.
+## 注意事项
 
-**Note:** There does not recommend to open an issue on this repo.
+* 本 Module 使用的 AccessKey 和 SecretKey 可以直接从 `profile` 和 `shared_credentials_file` 中获取。如果未设置，可通过下载安装 [aliyun-cli](https://github.com/aliyun/aliyun-cli#installation) 后进行配置。
 
-Authors
+提交问题
+-------
+如果在使用该 Terraform Module 的过程中有任何问题，可以直接创建一个 [Provider Issue](https://github.com/terraform-providers/terraform-provider-alicloud/issues/new)，我们将根据问题描述提供解决方案。
+
+**注意:** 不建议在该 Module 仓库中直接提交 Issue。
+
+作者
 -------
 Created and maintained by Zhou qilin(z17810666992@163.com), He Guimin(@xiaozhu36, heguimin36@163.com).
 
-License
+参考
 ----
 Apache 2 Licensed. See LICENSE for full details.
 
-Reference
+许可
 ---------
 * [Terraform-Provider-Alicloud Github](https://github.com/terraform-providers/terraform-provider-alicloud)
 * [Terraform-Provider-Alicloud Release](https://releases.hashicorp.com/terraform-provider-alicloud/)
