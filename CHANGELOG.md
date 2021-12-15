@@ -1,4 +1,10 @@
-## 1.1.0 (Unreleased)
+## 1.2.0 (Unreleased)
+## 1.1.0 (December 15, 2021)
+
+IMPROVEMENTS：
+
+Removes the provider setting and improves the Readme [GH-3]( https://github.com/terraform-alicloud-modules/terraform-alicloud-market-app-with-ecs-image/pull/3)
+
 ## 1.0.0 (February 25, 2020)
 
 IMPROVEMENTS：
