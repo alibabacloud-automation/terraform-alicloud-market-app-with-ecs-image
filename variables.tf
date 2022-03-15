@@ -46,45 +46,23 @@ variable "create_instance" {
   type        = bool
   default     = true
 }
+
 variable "number_of_instance" {
   description = "The number of ecs to be created."
   type        = number
   default     = 1
 }
-variable "allocate_public_ip" {
-  description = "Whether to allocate public ip for ECS instance. If 'create_slb' is true, it will be ignore."
-  type        = bool
-  default     = false
-}
-variable "ecs_instance_name" {
-  description = "The name of ECS Instance."
-  type        = string
-  default     = ""
-}
-variable "ecs_instance_password" {
-  description = "The password of ECS instance."
-  type        = string
-  default     = ""
-}
+
 variable "image_id" {
   description = "The image id used to launch one ecs instance. If not set, a fetched market place image by product_keyword will be used."
   type        = string
   default     = ""
 }
+
 variable "ecs_instance_type" {
   description = "The instance type used to launch ecs instance."
   type        = string
   default     = ""
-}
-variable "system_disk_category" {
-  description = "The system disk category used to launch one ecs instance."
-  type        = string
-  default     = "cloud_ssd"
-}
-variable "system_disk_size" {
-  description = "The system disk size used to launch ecs instance."
-  type        = number
-  default     = 40
 }
 
 variable "security_group_ids" {
@@ -92,20 +70,53 @@ variable "security_group_ids" {
   type        = list(string)
   default     = []
 }
+
+variable "ecs_instance_name" {
+  description = "The name of ECS Instance."
+  type        = string
+  default     = ""
+}
+
+variable "ecs_instance_password" {
+  description = "The password of ECS instance."
+  type        = string
+  default     = ""
+}
+
+variable "system_disk_category" {
+  description = "The system disk category used to launch one ecs instance."
+  type        = string
+  default     = "cloud_ssd"
+}
+
+variable "system_disk_size" {
+  description = "The system disk size used to launch ecs instance."
+  type        = number
+  default     = 40
+}
+
 variable "vswitch_id" {
   description = "The virtual switch ID to launch ECS instance in VPC."
   type        = string
   default     = ""
 }
+
 variable "private_ip" {
   description = "Configure ECS Instance private IP address"
   type        = string
   default     = ""
 }
+
 variable "internet_charge_type" {
   description = "The internet charge type of ECS instance. Choices are 'PayByTraffic' and 'PayByBandwidth'."
   type        = string
   default     = "PayByTraffic"
+}
+
+variable "allocate_public_ip" {
+  description = "Whether to allocate public ip for ECS instance. If 'create_slb' is true, it will be ignore."
+  type        = bool
+  default     = false
 }
 
 variable "internet_max_bandwidth_out" {
@@ -113,30 +124,35 @@ variable "internet_max_bandwidth_out" {
   type        = number
   default     = 10
 }
-variable "data_disks" {
-  description = "Additional data disks to attach to the scaled ECS instance."
-  type        = list(map(string))
-  default     = []
+
+variable "resource_group_id" {
+  description = "The Id of resource group which the ECS instance belongs."
+  type        = string
+  default     = ""
 }
-variable "volume_tags" {
-  description = "A mapping of tags to assign to the devices created by the instance at launch time."
-  type        = map(string)
-  default     = {}
-}
+
 variable "deletion_protection" {
   description = "Whether enable the deletion protection or not. 'true': Enable deletion protection. 'false': Disable deletion protection."
   type        = bool
   default     = false
 }
+
+variable "force_delete" {
+  description = "If it is true, the 'PrePaid' instance will be change to 'PostPaid' and then deleted forcibly. However, because of changing instance charge type has CPU core count quota limitation, so strongly recommand that 'Don't modify instance charge type frequentlly in one month'."
+  type        = bool
+  default     = true
+}
+
+variable "data_disks" {
+  description = "Additional data disks to attach to the scaled ECS instance."
+  type        = list(map(string))
+  default     = []
+}
+
 variable "tags" {
   description = "A mapping of tags to assign to the ECS and SLB."
   type        = map(string)
   default     = {}
-}
-variable "resource_group_id" {
-  description = "The Id of resource group which the ECS instance belongs."
-  type        = string
-  default     = ""
 }
 
 ###################
@@ -163,31 +179,19 @@ variable "existing_slb_id" {
 variable "slb_name" {
   description = "The name of a new load balancer."
   type        = string
-  default     = "tf-module-slb"
-}
-
-variable "frontend_port" {
-  description = "The fronted port of balancer."
-  type        = number
-  default     = 80
-}
-
-variable "instance_port" {
-  description = "The port of instance."
-  type        = number
-  default     = 8080
-}
-
-variable "address_type" {
-  description = "The type if address. Choices are 'intranet' and 'internet'. Default to 'internet'."
-  type        = string
-  default     = "internet"
+  default     = ""
 }
 
 variable "slb_internet_charge_type" {
   description = "The charge type of load balancer instance internet network."
   type        = string
   default     = "PayByTraffic"
+}
+
+variable "address_type" {
+  description = "The type if address. Choices are 'intranet' and 'internet'. Default to 'internet'."
+  type        = string
+  default     = "internet"
 }
 
 variable "slb_spec" {
@@ -200,12 +204,6 @@ variable "bandwidth" {
   description = "The load balancer instance bandwidth."
   type        = number
   default     = 10
-}
-
-variable "slb_tags" {
-  description = "A mapping of tags to assign to the resource."
-  type        = map(string)
-  default     = {}
 }
 
 variable "master_zone_id" {
@@ -226,10 +224,28 @@ variable "virtual_server_group_name" {
   default     = ""
 }
 
+variable "instance_port" {
+  description = "The port of instance."
+  type        = number
+  default     = 8080
+}
+
 variable "instance_weight_in_server_group" {
   description = "The weight of instance in server group."
-  type        = string
-  default     = ""
+  type        = number
+  default     = 10
+}
+
+variable "slb_tags" {
+  description = "A mapping of tags to assign to the resource."
+  type        = map(string)
+  default     = {}
+}
+
+variable "frontend_port" {
+  description = "The fronted port of balancer."
+  type        = number
+  default     = 80
 }
 
 ###################
@@ -249,6 +265,12 @@ variable "domain_name" {
 
 variable "dns_record" {
   description = "DNS record. Each item can contains keys: 'host_record'(The host record of the domain record.),'type'(The type of the domain. Valid values: A, NS, MX, TXT, CNAME, SRV, AAAA, CAA, REDIRECT_URL, FORWORD_URL. Default to A.),'priority'(The priority of domain record. Valid values are `[1-10]`. When the `type` is `MX`, this parameter is required.),'ttl'(The ttl of the domain record. Default to 600.),'line'(The resolution line of domain record. Default value is default.)."
+  type        = map(string)
+  default     = {}
+}
+
+variable "volume_tags" {
+  description = "A mapping of tags to assign to the devices created by the instance at launch time."
   type        = map(string)
   default     = {}
 }
