@@ -41,13 +41,7 @@ resource "alicloud_instance" "this" {
 
   resource_group_id   = var.resource_group_id
   deletion_protection = var.deletion_protection
-  force_delete        = true
-  tags = merge(
-    {
-      Created     = "Terraform"
-      Application = "Market-${var.product_keyword}"
-    }, var.tags,
-  )
+  force_delete        = var.force_delete
   dynamic "data_disks" {
     for_each = var.data_disks
     content {
@@ -60,6 +54,12 @@ resource "alicloud_instance" "this" {
       description          = lookup(data_disks.value, "description", null)
     }
   }
+  tags = merge(
+    {
+      Created     = "Terraform"
+      Application = "Market-${var.product_keyword}"
+    }, var.tags,
+  )
 }
 
 ############################################
@@ -78,27 +78,23 @@ locals {
 }
 
 module "slb" {
-  source                  = "alibaba/slb/alicloud/"
-  region                  = var.region
-  profile                 = var.profile
-  shared_credentials_file = var.shared_credentials_file
-  skip_region_validation  = var.skip_region_validation
+  source = "alibaba/slb/alicloud"
 
-  create               = local.create_slb
-  existing_slb_id      = var.existing_slb_id
-  use_existing_slb     = var.use_existing_slb
-  name                 = var.slb_name
-  internet_charge_type = var.slb_internet_charge_type
-  address_type         = var.address_type
-  vswitch_id           = var.vswitch_id
-  spec                 = var.slb_spec
-  bandwidth            = var.bandwidth
-  tags                 = var.slb_tags
-  master_zone_id       = var.master_zone_id
-  slave_zone_id        = var.slave_zone_id
-
+  create                          = local.create_slb
+  use_existing_slb                = var.use_existing_slb
+  existing_slb_id                 = var.existing_slb_id
+  name                            = var.slb_name
+  internet_charge_type            = var.slb_internet_charge_type
+  address_type                    = var.address_type
+  vswitch_id                      = var.vswitch_id
+  spec                            = var.slb_spec
+  bandwidth                       = var.bandwidth
+  master_zone_id                  = var.master_zone_id
+  slave_zone_id                   = var.slave_zone_id
   virtual_server_group_name       = var.virtual_server_group_name
   servers_of_virtual_server_group = local.servers_of_virtual_server_group
+  tags                            = var.slb_tags
+
 }
 
 resource "alicloud_slb_listener" "this" {
@@ -118,9 +114,9 @@ data "alicloud_slbs" "this" {
 }
 
 locals {
-  allocate_public_ip = ! var.create_instance ? false : local.create_slb == true ? false : var.allocate_public_ip
-  create_dns         = var.create_slb || var.use_existing_slb || var.create_instance ? var.bind_domain : local.allocate_public_ip ? var.bind_domain : false
-  value              = var.create_slb || var.use_existing_slb ? var.existing_slb_id != "" ? data.alicloud_slbs.this.address : module.slb.this_slb_address : concat(alicloud_instance.this.*.public_ip, [""])[0]
+  allocate_public_ip = !var.create_instance ? false : local.create_slb ? false : var.allocate_public_ip
+  create_dns         = var.bind_domain
+  value              = var.create_slb ? module.slb.this_slb_address : var.existing_slb_id != "" ? data.alicloud_slbs.this.slbs.0.address : null
   records = [
     {
       value    = local.value
@@ -136,13 +132,10 @@ locals {
 }
 
 module "dns" {
-  source                  = "terraform-alicloud-modules/dns/alicloud"
-  region                  = var.region
-  profile                 = var.profile
-  shared_credentials_file = var.shared_credentials_file
-  skip_region_validation  = var.skip_region_validation
+  source = "terraform-alicloud-modules/dns/alicloud"
 
   create      = local.create_dns
   domain_name = var.domain_name
   records     = local.records
+
 }
