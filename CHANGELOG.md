@@ -1,4 +1,7 @@
-## 1.2.0 (Unreleased)
+## 1.2.0 (August 06, 2024)
+
+- deprecate [GH-5](https://github.com/alibabacloud-automation/terraform-alicloud-market-app-with-ecs-image/pull/5)
+
 ## 1.1.0 (December 15, 2021)
 
 IMPROVEMENTS：
